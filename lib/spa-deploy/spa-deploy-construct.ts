@@ -1,10 +1,10 @@
 import {
-  CloudFrontWebDistribution,
-  ViewerCertificate,
-  OriginAccessIdentity,
-  Behavior,
-  SSLMethod,
-  SecurityPolicyProtocol,
+    CloudFrontWebDistribution,
+    ViewerCertificate,
+    OriginAccessIdentity,
+    Behavior,
+    SSLMethod,
+    SecurityPolicyProtocol, CloudFrontWebDistributionProps,
 } from '@aws-cdk/aws-cloudfront';
 import { PolicyStatement } from '@aws-cdk/aws-iam';
 import { HostedZone, ARecord, RecordTarget } from '@aws-cdk/aws-route53';
@@ -22,6 +22,7 @@ export interface SPADeployConfig {
   readonly certificateARN?: string,
   readonly cfBehaviors?: Behavior[],
   readonly cfAliases?: string[],
+  readonly cfOptions?: CloudFrontWebDistributionProps,
   readonly exportWebsiteUrlOutput?:boolean,
   readonly exportWebsiteUrlName?: string,
   readonly blockPublicAccess?:s3.BlockPublicAccess
@@ -33,6 +34,7 @@ export interface HostedZoneConfig {
   readonly indexDoc:string,
   readonly errorDoc?:string,
   readonly cfBehaviors?: Behavior[],
+  readonly cfOptions?: CloudFrontWebDistributionProps,
   readonly websiteFolder: string,
   readonly zoneName: string,
   readonly subdomain?: string,
@@ -115,6 +117,7 @@ export class SPADeploy extends cdk.Construct {
      */
     private getCFConfig(websiteBucket:s3.Bucket, config:any, accessIdentity: OriginAccessIdentity, cert?:DnsValidatedCertificate) {
       const cfConfig:any = {
+        ...config.cfOptions,
         originConfigs: [
           {
             s3OriginSource: {
@@ -246,10 +249,10 @@ export class SPADeploy extends cdk.Construct {
 
       if (!config.subdomain) {
         new HttpsRedirect(this, 'Redirect', {
-            zone,
-            recordNames: [`www.${config.zoneName}`],
-            targetDomain: config.zoneName,
-        });          
+          zone,
+          recordNames: [`www.${config.zoneName}`],
+          targetDomain: config.zoneName,
+        });
       }
 
       return { websiteBucket, distribution };

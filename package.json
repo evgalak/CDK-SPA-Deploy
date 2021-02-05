@@ -15,7 +15,8 @@
     "lint": "eslint --ext .ts,.tsx --format node_modules/eslint-formatter-pretty .",
     "lint:fix": "eslint --fix --ext .ts,.tsx --format node_modules/eslint-formatter-pretty .",
     "cdk": "cdk",
-    "package": "jsii-pacmak"
+    "package": "jsii-pacmak",
+    "prepare": "npm run build"
   },
   "jsii": {
     "outdir": "dist",
